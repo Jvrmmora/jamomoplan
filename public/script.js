@@ -61,23 +61,27 @@ function renderContent() {
 function renderCheckbox() {
     const checkboxContainer = document.getElementById('checkbox-container');
     checkboxContainer.innerHTML = `
-        <input type="checkbox" id="day-checkbox" ${completionStatus[currentWeek * 7 + currentDay] ? 'checked' : ''}>
+        <input type="checkbox" id="day-checkbox" ${completionStatus[currentWeek * 7 + currentDay] ? 'checked' : ''} onchange="toggleMarkAsDoneButton()">
         <label for="day-checkbox">He completado este día</label>
     `;
+    toggleMarkAsDoneButton();
 }
 
 function renderSummary() {
     const summary = document.getElementById('summary');
     const remainingDays = [];
     for (let i = 0; i < completionStatus.length; i++) {
-        if (!completionStatus[i]) {
-            const weekIndex = Math.floor(i / 7);
-            const dayIndex = i % 7;
-            remainingDays.push(`Día ${i + 1}: ${plan[weekIndex].days[dayIndex]}`);
+        const weekIndex = Math.floor(i / 7);
+        const dayIndex = i % 7;
+        const dayText = `Día ${i + 1}: ${plan[weekIndex].days[dayIndex]}`;
+        if (completionStatus[i]) {
+            remainingDays.push(`<li class="completed">${dayText} </li>`);
+        } else {
+            remainingDays.push(`<li class="pending">${dayText}</li>`);
         }
     }
     summary.innerHTML = remainingDays.length > 0 
-        ? `<h3 onclick="toggleSummary()">Días por completar: ⬇️</h3><ul>${remainingDays.map(day => `<li class="pending">${day}</li>`).join('')}</ul>`
+        ? `<h3 onclick="toggleSummary()">Días por completar:</h3><ul>${remainingDays.join('')}</ul>`
         : '<h3>¡Todos los días completados!</h3>';
 }
 
@@ -136,14 +140,27 @@ function prevDay() {
 
 function markAsDone() {
     const checkbox = document.getElementById('day-checkbox');
+    const dayIndex = currentWeek * 7 + currentDay;
     if (checkbox.checked) {
-        completionStatus[currentWeek * 7 + currentDay] = true;
+        completionStatus[dayIndex] = true;
         alert(`¡Bien hecho! Completaste el ${plan[currentWeek].days[currentDay]}.`);
         sendEmailNotification();
-        saveProgress();
-        renderContent();
     } else {
-        alert('Marca el día como completado.');
+        completionStatus[dayIndex] = false;
+    }
+    saveProgress();
+    renderContent();
+}
+
+function toggleMarkAsDoneButton() {
+    const checkbox = document.getElementById('day-checkbox');
+    const markAsDoneButton = document.getElementById('mark-as-done-button');
+    const dayIndex = currentWeek * 7 + currentDay;
+    console.log(completionStatus[dayIndex])
+    if (checkbox.checked && completionStatus[dayIndex]) {
+        markAsDoneButton.disabled = true;
+    } else {
+        markAsDoneButton.disabled = false;
     }
 }
 
