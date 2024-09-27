@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plan de Sanación</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/suneditor@latest/dist/css/suneditor.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/suneditor@latest/dist/suneditor.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/suneditor@latest/src/lang/en.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="config.js"></script> <!-- Cargar la configuración -->
     <script type="text/javascript">
@@ -33,7 +36,10 @@
     <button onclick="nextDay()">Día Siguiente</button>
     
     <div id="checkbox-container"></div>
-    
+    <div id="description-container">
+        <textarea id="day-description"></textarea>
+        <button onclick="saveDescription()">Guardar Descripción</button>
+    </div>
     <button id="mark-as-done-button" onclick="markAsDone()">Marcar como completado</button>
     <div id="summary"></div>
 </div>

@@ -71,8 +71,9 @@ app.put('/profile', async (req, res) => {
 
 // Esquema y modelo de progreso
 const progressSchema = new mongoose.Schema({
-    userId: String,
-    completionStatus: [Boolean]
+    userId: { type: String, required: true },
+    completionStatus: { type: [Boolean], required: true },
+    descriptions: { type: [String], required: true }
 });
 
 const Progress = mongoose.model('Progress', progressSchema);
@@ -108,14 +109,15 @@ app.get('/progress/:userId',auth, async (req, res) => {
     }
 });
 
-app.post('/progress', auth,async (req, res) => {
-    const { userId, completionStatus } = req.body;
+app.post('/progress', auth, async (req, res) => {
+    const { userId, completionStatus, descriptions } = req.body;
     try {
         let progress = await Progress.findOne({ userId });
         if (progress) {
             progress.completionStatus = completionStatus;
+            progress.descriptions = descriptions;
         } else {
-            progress = new Progress({ userId, completionStatus });
+            progress = new Progress({ userId, completionStatus, descriptions });
         }
         await progress.save();
         res.json(progress);

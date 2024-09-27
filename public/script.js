@@ -1,7 +1,23 @@
 let plan = [];
 let currentDay = 0;
 let currentWeek = 0;
-let completionStatus = Array.from({length: 30}, () => false);
+let completionStatus = Array.from({ length: 30 }, () => false);
+let descriptions = Array.from({ length: 30 }, () => '');
+
+// Inicializar SUNEditor
+let editor;
+
+document.addEventListener('DOMContentLoaded', () => {
+    editor = SUNEDITOR.create('day-description', {
+        buttonList: [
+            ['undo', 'redo', 'bold', 'underline', 'italic', 'strike', 'list', 'align', 'font', 'fontSize', 'formatBlock', 'table', 'link', 'image', 'video', 'fullScreen']
+        ],
+        lang: SUNEDITOR_LANG['ko']
+    });
+
+    loadPlan();
+    loadProgress();
+});
 
 // Recuperar el plan desde el servidor
 async function loadPlan() {
@@ -28,7 +44,6 @@ async function loadPlan() {
 async function loadProgress() {
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
-    console.log(user)
     try {
         const response = await fetch(`http://localhost:3000/progress/${user.email}`, {
             headers: {
@@ -42,6 +57,7 @@ async function loadProgress() {
         const data = await response.json();
         if (data) {
             completionStatus = data.completionStatus;
+            descriptions = data.descriptions || descriptions;
             renderContent();
         }
     } catch (error) {
@@ -53,7 +69,6 @@ async function loadProgress() {
 async function saveProgress() {
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
-    console.log(user)
     try {
         const response = await fetch('http://localhost:3000/progress', {
             method: 'POST',
@@ -61,7 +76,7 @@ async function saveProgress() {
                 'Content-Type': 'application/json',
                 'Authorization': token
             },
-            body: JSON.stringify({ userId: user.email, completionStatus })
+            body: JSON.stringify({ userId: user.email, completionStatus, descriptions })
         });
         const data = await response.json();
         console.log('Progress saved:', data);
@@ -76,6 +91,7 @@ function renderContent() {
     content.innerHTML = `<h2>${plan[currentWeek].week}</h2>`;
     content.innerHTML += `<div class="day">${plan[currentWeek].days[currentDay]}</div>`;
     renderCheckbox();
+    renderDescription();
     renderSummary();
     renderProgressTitle();
     renderProgressBar();
@@ -88,6 +104,20 @@ function renderCheckbox() {
         <label for="day-checkbox">He completado este día</label>
     `;
     toggleMarkAsDoneButton();
+}
+
+function renderDescription() {
+    const dayIndex = currentWeek * 7 + currentDay;
+    editor.setContents(descriptions[dayIndex]);
+    console.log(editor)
+}
+
+function saveDescription() {
+    const dayIndex = currentWeek * 7 + currentDay;
+    const description = editor.getContents();
+    console.log(description)
+    descriptions[dayIndex] = description;
+    saveProgress();
 }
 
 function renderSummary() {
@@ -179,7 +209,6 @@ function toggleMarkAsDoneButton() {
     const checkbox = document.getElementById('day-checkbox');
     const markAsDoneButton = document.getElementById('mark-as-done-button');
     const dayIndex = currentWeek * 7 + currentDay;
-    console.log(completionStatus[dayIndex])
     if (checkbox.checked && completionStatus[dayIndex]) {
         markAsDoneButton.disabled = true;
     } else {
@@ -203,10 +232,6 @@ function sendEmailNotification() {
             alert('Error al enviar el correo. Intenta nuevamente.');
         });
 }
-
-// Cargar el plan y el progreso al iniciar
-loadPlan();
-loadProgress();
 
 // Funciones de autenticación y perfil
 document.addEventListener('DOMContentLoaded', () => {
