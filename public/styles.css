@@ -177,7 +177,7 @@ button:hover {
 /* Estilos para el header y el menú de usuario */
 header {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     padding: 10px;
     background-color: #2980b9;
     color: white;
@@ -425,4 +425,13 @@ header {
     background-color: #ccc; /* Color gris para el botón deshabilitado */
     cursor: not-allowed; /* Cambiar el cursor a no permitido */
     transform: none; /* Desactivar la animación de escala */
+}
+
+button:disabled {
+    background-color: #ccc; /* Color gris para el botón deshabilitado */
+    cursor: not-allowed; /* Cambiar el cursor a no permitido */
+}
+
+.current-date{
+    padding: 10px;
 }

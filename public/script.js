@@ -1,3 +1,5 @@
+const { DateTime } = luxon;
+
 let plan = [];
 let currentDay = 0;
 let currentWeek = 0;
@@ -61,7 +63,7 @@ async function loadProgress() {
             completionDates = data.completionDates;
             descriptions = data.descriptions || descriptions;
             redirectToLastCompletedDay();
-            renderContent();
+            // renderContent();
         }
     } catch (error) {
         console.error('Error loading progress:', error);
@@ -103,7 +105,25 @@ function renderContent() {
     renderSummary();
     renderProgressTitle();
     renderProgressBar();
+    updateNavigationButtons();
 }
+function updateNavigationButtons() {
+    let diff = false
+    const dayIndex = currentWeek * 7 + currentDay;
+    const nextDayButton = document.getElementById('next-day-button');
+    const currentDate = DateTime.now().toFormat('dd/MM/yyyy');
+    const dateCompleted = completionDates[dayIndex];
+    if(dateCompleted){
+        diff = currentDate !== dateCompleted.split(' ')[0];
+        console.log(diff)
+    }
+    if(!completionStatus[dayIndex] || !diff){
+        nextDayButton.disabled = true;
+    }else{
+        nextDayButton.disabled = false;
+    }
+}
+
 
 function renderCheckbox() {
     const checkboxContainer = document.getElementById('checkbox-container');
@@ -151,7 +171,7 @@ function renderSummary() {
         }
     }
     summary.innerHTML = remainingDays.length > 0 
-        ? `<h3 onclick="toggleSummary()">Días por completar:</h3><ul>${remainingDays.join('')}</ul>`
+        ? `<h3 onclick="toggleSummary()">Días por completar⬇️ :</h3><ul>${remainingDays.join('')}</ul>`
         : '<h3>¡Todos los días completados!</h3>';
 }
 

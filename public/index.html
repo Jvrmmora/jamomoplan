@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/suneditor@latest/dist/suneditor.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/suneditor@latest/src/lang/en.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@2.0.2/build/global/luxon.min.js"></script>
     <script src="config.js"></script> <!-- Cargar la configuración -->
     <script type="text/javascript">
     (function(){
@@ -23,6 +24,7 @@
 <div class="container">
     <div id="alert-container"></div>
     <header>
+            <div id="current-date" class="current-date"></div>
         <div id="user-info" class="user-info">
             <div class="user-initials" id="user-initials"></div>
             <div class="user-menu" id="user-menu">
@@ -33,8 +35,8 @@
     </header>
     <h1>Plan de Sanación</h1>
     <div id="content"></div>
-    <button onclick="prevDay()">Día Anterior</button>
-    <button onclick="nextDay()">Día Siguiente</button>
+    <button id="prev-day-button" onclick="prevDay()">Día Anterior</button>
+    <button id="next-day-button" onclick="nextDay()">Día Siguiente</button>
     
     <div id="checkbox-container"></div>
     <div id="completion-date-container"></div>
@@ -56,7 +58,23 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         window.location.href = 'login.html';
     }
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
 });
+function updateDateTime() {
+    const { DateTime } = luxon;
+    const now = DateTime.now();
+    const tomorrow = now.plus({ days: 1 }).startOf('day');
+
+    // Calcular el tiempo restante para mañana
+    const diff = tomorrow.diff(now, ['hours', 'minutes', 'seconds']).toObject();
+    const hours = Math.floor(diff.hours).toString().padStart(2, '0');
+    const minutes = Math.floor(diff.minutes).toString().padStart(2, '0');
+    const seconds = Math.floor(diff.seconds).toString().padStart(2, '0');
+
+    // Mostrar el temporizador
+    document.getElementById('current-date').textContent = `${now.toLocaleString(DateTime.DATE_FULL)}, Próximo dia ${hours}:${minutes}:${seconds}`;
+}
 function showAlert(message, type) {
     const alertContainer = document.getElementById('alert-container');
     const alert = document.createElement('div');
