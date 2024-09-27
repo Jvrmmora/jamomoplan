@@ -2,6 +2,7 @@ let plan = [];
 let currentDay = 0;
 let currentWeek = 0;
 let completionStatus = Array.from({ length: 30 }, () => false);
+let completionDates = Array.from({ length: 30 }, () => false);
 let descriptions = Array.from({ length: 30 }, () => '');
 
 // Inicializar SUNEditor
@@ -57,6 +58,7 @@ async function loadProgress() {
         const data = await response.json();
         if (data) {
             completionStatus = data.completionStatus;
+            completionDates = data.completionDates;
             descriptions = data.descriptions || descriptions;
             renderContent();
         }
@@ -95,6 +97,7 @@ function renderContent() {
     content.innerHTML = `<h2>${plan[currentWeek].week}</h2>`;
     content.innerHTML += `<div class="day">${plan[currentWeek].days[currentDay]}</div>`;
     renderCheckbox();
+    renderCompletionDate()
     renderDescription();
     renderSummary();
     renderProgressTitle();
@@ -108,8 +111,18 @@ function renderCheckbox() {
         <label for="day-checkbox">He completado este día</label>
     `;
     toggleMarkAsDoneButton();
+    renderCompletionDate();
 }
-
+function renderCompletionDate() {
+    const completionDateContainer = document.getElementById('completion-date-container');
+    const dayIndex = currentWeek * 7 + currentDay;
+    const completionDate = completionDates[dayIndex];
+    if (completionDate) {
+        completionDateContainer.innerHTML = `<span class="tag">Completado el ${completionDate}</span>`;
+    } else {
+        completionDateContainer.innerHTML = '';
+    }
+}
 function renderDescription() {
     const dayIndex = currentWeek * 7 + currentDay;
     editor.setContents(descriptions[dayIndex]);

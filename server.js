@@ -6,6 +6,7 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config(); // Cargar variables de entorno
+const { DateTime } = require('luxon');
 
 const User = require('./models/User');
 
@@ -73,7 +74,8 @@ app.put('/profile', async (req, res) => {
 const progressSchema = new mongoose.Schema({
     userId: { type: String, required: true },
     completionStatus: { type: [Boolean], required: true },
-    descriptions: { type: [String], required: true }
+    descriptions: { type: [String], required: true },
+    completionDates: { type: [String], required: true }
 });
 
 const Progress = mongoose.model('Progress', progressSchema);
@@ -116,8 +118,16 @@ app.post('/progress', auth, async (req, res) => {
         if (progress) {
             progress.completionStatus = completionStatus;
             progress.descriptions = descriptions;
+            progress.completionDates = completionStatus.map((status, index) => {
+                if (status) {
+                    return progress.completionDates[index] || DateTime.now().toFormat('dd/MM/yyyy hh:mm a');
+                } else {
+                    return null;
+                }
+            });
         } else {
-            progress = new Progress({ userId, completionStatus, descriptions });
+            const completionDates = completionStatus.map(status => status ? DateTime.now().toFormat('dd/MM/yyyy hh:mm a') : null);
+            progress = new Progress({ userId, completionStatus, descriptions, completionDates });
         }
         await progress.save();
         res.json(progress);

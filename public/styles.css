@@ -174,11 +174,6 @@ button:hover {
     margin-top: 20px;
     color: #2c3e50;
 }
-
-button:disabled {
-    background-color: #ccc; /* Color gris para el botón deshabilitado */
-    cursor: not-allowed; /* Cambiar el cursor a no permitido */
-}
 /* Estilos para el header y el menú de usuario */
 header {
     display: flex;
@@ -396,4 +391,38 @@ header {
     border-color: #2980b9;
     box-shadow: 0 0 5px rgba(41, 128, 185, 0.5);
     outline: none;
+}
+
+/* Añadir esto a tu archivo styles.css */
+.tag {
+    display: inline-block;
+    padding: 0.2em 0.5em;
+    font-size: 0.9em;
+    color: white;
+    background-color: green;
+    border-radius: 0.25em;
+    margin-top: 0.5em;
+}
+
+/* Estilos para el botón mark-as-done-button */
+#mark-as-done-button {
+    background-color: #36393b; /* Color elegante */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#mark-as-done-button:hover {
+    background-color: #91979b; /* Color más oscuro en hover */
+    transform: scale(1.05); /* Animación de escala */
+}
+
+#mark-as-done-button:disabled {
+    background-color: #ccc; /* Color gris para el botón deshabilitado */
+    cursor: not-allowed; /* Cambiar el cursor a no permitido */
+    transform: none; /* Desactivar la animación de escala */
 }
