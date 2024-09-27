@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Register</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -12,21 +12,23 @@
         <a href="login.html" class="navbar-brand">JamomoPlan</a>
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a href="register.html" class="nav-link">Registrarse</a>
+                <a href="login.html" class="nav-link">Iniciar Sesión</a>
             </li>
         </ul>
     </nav>
 </header>
 <div class="container">
     <div id="alert-container"></div> <!-- Contenedor para las alertas -->
-    <h1>Iniciar Sesión</h1>
-    <form id="login-form">
-        <input type="email" id="email" placeholder="Correo electrónico" required>
+    <h1>Registrarse</h1>
+    <form id="register-form">
+        <input type="text" id="firstName" placeholder="Nombre" required>
+        <input type="text" id="lastName" placeholder="Apellido" required>
+        <input type="email" id="register-email" placeholder="Correo electrónico" required>
         <div class="password-container">
-            <input type="password" id="password" placeholder="Contraseña" required>
-            <img src="images/eye.png" alt="Mostrar/Ocultar contraseña" width="20px" onclick="togglePasswordVisibility('password')" class="toggle-password">
+            <input type="password" id="register-password" placeholder="Contraseña" required>
+            <img src="images/eye.png" alt="Mostrar/Ocultar contraseña" width="20px" onclick="togglePasswordVisibility('register-password')" class="toggle-password">
         </div>
-        <button type="submit">Iniciar Sesión</button>
+        <button type="submit">Registrarse</button>
     </form>
 </div>
 <script>
@@ -47,21 +49,22 @@ function showAlert(message, type) {
     }, 2000);
 }
 
-document.getElementById('login-form').addEventListener('submit', async (e) => {
+document.getElementById('register-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const response = await fetch('http://localhost:3000/login', {
+    const firstName = document.getElementById('firstName').value;
+    const lastName = document.getElementById('lastName').value;
+    const email = document.getElementById('register-email').value;
+    const password = document.getElementById('register-password').value;
+    const response = await fetch('http://localhost:3000/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ firstName, lastName, email, password })
     });
-    const data = await response.json();
     if (response.ok) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        window.location.href = 'index.html';
+        showAlert('Usuario registrado exitosamente', 'success');
+        document.getElementById('register-form').reset();
     } else {
+        const data = await response.json();
         showAlert(data, 'error');
     }
 });
