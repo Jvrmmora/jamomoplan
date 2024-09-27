@@ -213,13 +213,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
         const initials = user.firstName.charAt(0) + user.lastName.charAt(0);
-        document.getElementById('user-info').innerHTML = `
-            <div class="user-initials">${initials}</div>
-            <div class="user-menu">
-                <a href="#" onclick="showProfile()">Perfil</a>
-                <a href="#" onclick="logout()">Cerrar Sesión</a>
-            </div>
-        `;
+        document.getElementById('user-initials').textContent = initials;
+
+        const userInitials = document.getElementById('user-initials');
+        const userMenu = document.getElementById('user-menu');
+
+        userInitials.addEventListener('click', () => {
+            userMenu.classList.toggle('visible');
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!userInitials.contains(event.target) && !userMenu.contains(event.target)) {
+                userMenu.classList.remove('visible');
+            }
+        });
     } else {
         window.location.href = 'login.html';
     }
