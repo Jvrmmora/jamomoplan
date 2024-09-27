@@ -313,6 +313,9 @@ header {
 .alert.error {
     background-color: #e74c3c;
 }
+.alert.warnning {
+    background-color: #665a00;
+}
 
 @keyframes fadeInOut {
     0% {

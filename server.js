@@ -43,7 +43,7 @@ app.post('/login', async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).send('Invalid credentials');
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.TOKEN_EXP });
         res.json({ token, user: { firstName: user.firstName, lastName: user.lastName, email: user.email } });
     } catch (err) {
         res.status(500).send(err);
@@ -95,7 +95,7 @@ const auth = (req, res, next) => {
         req.user = decoded;
         next();
     } catch (err) {
-        res.status(400).send('Invalid token');
+        res.status(403).send('Invalid token');
     }
 };
 

@@ -28,8 +28,8 @@ async function loadPlan() {
                 'Authorization': token
             }
         });
-        if (response.status === 401) {
-            window.location.href = 'login.html';
+        if (response.status === 401 || response.status === 403) {
+            logout();
             return;
         }
         const data = await response.json();
@@ -50,8 +50,8 @@ async function loadProgress() {
                 'Authorization': token
             }
         });
-        if (response.status === 401) {
-            window.location.href = 'login.html';
+        if (response.status === 401 || response.status === 403) {
+            logout();
             return;
         }
         const data = await response.json();
@@ -78,6 +78,10 @@ async function saveProgress() {
             },
             body: JSON.stringify({ userId: user.email, completionStatus, descriptions })
         });
+        if (response.status === 401 || response.status === 403) {
+            logout();
+            return;
+        }
         const data = await response.json();
         console.log('Progress saved:', data);
     } catch (error) {
@@ -117,6 +121,7 @@ function saveDescription() {
     const description = editor.getContents();
     console.log(description)
     descriptions[dayIndex] = description;
+    showAlert('Descripcion guardada', 'success');
     saveProgress();
 }
 
@@ -196,7 +201,7 @@ function markAsDone() {
     const dayIndex = currentWeek * 7 + currentDay;
     if (checkbox.checked) {
         completionStatus[dayIndex] = true;
-        alert(`¡Bien hecho! Completaste el ${plan[currentWeek].days[currentDay]}.`);
+        showAlert(`¡Bien hecho! Completaste el ${plan[currentWeek].days[currentDay]}.`, 'success');
         sendEmailNotification();
     } else {
         completionStatus[dayIndex] = false;
@@ -217,19 +222,20 @@ function toggleMarkAsDoneButton() {
 }
 
 function sendEmailNotification() {
+    const user = JSON.parse(localStorage.getItem('user'));
     const templateParams = {
         to_email: 'tu_correo@ejemplo.com', // Cambia esto por tu dirección de correo
         day: plan[currentWeek].days[currentDay], // Envía el día completado
-        subject: `🎉 Notificación de Progreso dia numero ${plan[currentWeek].days[currentDay]}` 
+        subject: `🎉 Hola! ${user.firstName} Notificación de Progreso dia numero ${plan[currentWeek].days[currentDay]}` 
     };
 
     emailjs.send('service_rqigop3', 'template_n80o0be', templateParams)
         .then(function(response) {
             console.log('SUCCESS!', response.status, response.text);
-            alert('¡Correo enviado exitosamente! 🎉');
+            showAlert('¡Correo enviado exitosamente! 🎉', 'success');
         }, function(error) {
             console.log('FAILED...', error);
-            alert('Error al enviar el correo. Intenta nuevamente.');
+            // showAlert('Error al enviar el correo. Intenta nuevamente.', 'error');
         });
 }
 
@@ -281,5 +287,6 @@ function showProfile() {
 function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    window.location.href = 'login.html';
+    showAlert('Sesion finalizada', 'warnning');
+    setTimeout(() => { window.location.href = 'login.html';}, 1000);
 }
