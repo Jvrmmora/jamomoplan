@@ -18,6 +18,9 @@
 <body>
 
 <div class="container">
+    <header>
+        <div id="user-info" class="user-info"></div>
+    </header>
     <h1>Plan de Sanación</h1>
     <div id="content"></div>
     <button onclick="prevDay()">Día Anterior</button>
@@ -30,5 +33,49 @@
 </div>
 
 <script src="script.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+        const initials = user.firstName.charAt(0) + user.lastName.charAt(0);
+        document.getElementById('user-info').innerHTML = `
+            <div class="user-initials">${initials}</div>
+            <div class="user-menu">
+                <a href="#" onclick="showProfile()">Perfil</a>
+                <a href="#" onclick="logout()">Cerrar Sesión</a>
+            </div>
+        `;
+    } else {
+        window.location.href = 'login.html';
+    }
+});
+
+function showProfile() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const newFirstName = prompt('Nuevo nombre:', user.firstName);
+    const newLastName = prompt('Nuevo apellido:', user.lastName);
+    const newPassword = prompt('Nueva contraseña:');
+    const token = localStorage.getItem('token');
+
+    fetch('http://localhost:3000/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, firstName: newFirstName, lastName: newLastName, password: newPassword })
+    })
+    .then(response => response.json())
+    .then(data => {
+        localStorage.setItem('user', JSON.stringify(data));
+        alert('Perfil actualizado');
+        location.reload();
+    })
+    .catch(err => console.error(err));
+}
+
+function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = 'login.html';
+}
+</script>
 </body>
 </html>

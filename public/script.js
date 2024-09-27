@@ -2,12 +2,20 @@ let plan = [];
 let currentDay = 0;
 let currentWeek = 0;
 let completionStatus = Array.from({length: 30}, () => false);
-const userId = 'user1'; // Puedes cambiar esto por un ID de usuario dinámico
 
 // Recuperar el plan desde el servidor
 async function loadPlan() {
+    const token = localStorage.getItem('token');
     try {
-        const response = await fetch('http://localhost:3000/plan');
+        const response = await fetch('http://localhost:3000/plan', {
+            headers: {
+                'Authorization': token
+            }
+        });
+        if (response.status === 401) {
+            window.location.href = 'login.html';
+            return;
+        }
         const data = await response.json();
         plan = data;
         renderContent();
@@ -18,8 +26,19 @@ async function loadPlan() {
 
 // Recuperar el progreso desde el servidor
 async function loadProgress() {
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'));
+    console.log(user)
     try {
-        const response = await fetch(`http://localhost:3000/progress/${userId}`);
+        const response = await fetch(`http://localhost:3000/progress/${user.email}`, {
+            headers: {
+                'Authorization': token
+            }
+        });
+        if (response.status === 401) {
+            window.location.href = 'login.html';
+            return;
+        }
         const data = await response.json();
         if (data) {
             completionStatus = data.completionStatus;
@@ -32,13 +51,17 @@ async function loadProgress() {
 
 // Guardar el progreso en el servidor
 async function saveProgress() {
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'));
+    console.log(user)
     try {
         const response = await fetch('http://localhost:3000/progress', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': token
             },
-            body: JSON.stringify({ userId, completionStatus })
+            body: JSON.stringify({ userId: user.email, completionStatus })
         });
         const data = await response.json();
         console.log('Progress saved:', data);
@@ -184,3 +207,47 @@ function sendEmailNotification() {
 // Cargar el plan y el progreso al iniciar
 loadPlan();
 loadProgress();
+
+// Funciones de autenticación y perfil
+document.addEventListener('DOMContentLoaded', () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+        const initials = user.firstName.charAt(0) + user.lastName.charAt(0);
+        document.getElementById('user-info').innerHTML = `
+            <div class="user-initials">${initials}</div>
+            <div class="user-menu">
+                <a href="#" onclick="showProfile()">Perfil</a>
+                <a href="#" onclick="logout()">Cerrar Sesión</a>
+            </div>
+        `;
+    } else {
+        window.location.href = 'login.html';
+    }
+});
+
+function showProfile() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const newFirstName = prompt('Nuevo nombre:', user.firstName);
+    const newLastName = prompt('Nuevo apellido:', user.lastName);
+    const newPassword = prompt('Nueva contraseña:');
+    const token = localStorage.getItem('token');
+
+    fetch('http://localhost:3000/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, firstName: newFirstName, lastName: newLastName, password: newPassword })
+    })
+    .then(response => response.json())
+    .then(data => {
+        localStorage.setItem('user', JSON.stringify(data));
+        alert('Perfil actualizado');
+        location.reload();
+    })
+    .catch(err => console.error(err));
+}
+
+function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = 'login.html';
+}
