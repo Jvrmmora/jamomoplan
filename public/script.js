@@ -60,6 +60,7 @@ async function loadProgress() {
             completionStatus = data.completionStatus;
             completionDates = data.completionDates;
             descriptions = data.descriptions || descriptions;
+            redirectToLastCompletedDay();
             renderContent();
         }
     } catch (error) {
@@ -126,13 +127,11 @@ function renderCompletionDate() {
 function renderDescription() {
     const dayIndex = currentWeek * 7 + currentDay;
     editor.setContents(descriptions[dayIndex]);
-    console.log(editor)
 }
 
 function saveDescription() {
     const dayIndex = currentWeek * 7 + currentDay;
     const description = editor.getContents();
-    console.log(description)
     descriptions[dayIndex] = description;
     showAlert('Descripcion guardada', 'success');
     saveProgress();
@@ -258,7 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (user) {
         const initials = user.firstName.charAt(0) + user.lastName.charAt(0);
         document.getElementById('user-initials').textContent = initials;
-
         const userInitials = document.getElementById('user-initials');
         const userMenu = document.getElementById('user-menu');
 
@@ -275,6 +273,15 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'login.html';
     }
 });
+
+function redirectToLastCompletedDay() {
+    const lastCompletedIndex = completionStatus.lastIndexOf(true);
+    if (lastCompletedIndex !== -1) {
+        currentWeek = Math.floor(lastCompletedIndex / 7);
+        currentDay = lastCompletedIndex % 7;
+    }
+    renderContent();
+}
 
 function showProfile() {
     const user = JSON.parse(localStorage.getItem('user'));
