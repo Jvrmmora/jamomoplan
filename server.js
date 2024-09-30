@@ -50,6 +50,12 @@ app.post('/login', async (req, res) => {
         res.status(500).send(err);
     }
 });
+app.get('/env.js', (req, res) => {
+    res.setHeader('Content-Type', 'application/javascript');
+    res.send(`window.env = ${JSON.stringify({
+        BACK_END_ENV: process.env.BACK_END_ENV
+    })}`);
+});
 app.put('/profile', async (req, res) => {
     const { token, firstName, lastName, password } = req.body;
     try {

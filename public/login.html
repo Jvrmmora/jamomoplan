@@ -29,6 +29,7 @@
         <button type="submit">Iniciar Sesión</button>
     </form>
 </div>
+<script src="/env.js"></script>
 <script>
 function togglePasswordVisibility(id) {
     const passwordInput = document.getElementById(id);
@@ -51,18 +52,20 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-    const response = await fetch('http://localhost:3000/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-    });
-    const data = await response.json();
-    if (response.ok) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        window.location.href = 'index.html';
-    } else {
-        showAlert(data, 'error');
+    try{
+        const response = await fetch(`${window.env.BACK_END_ENV}/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user));
+            window.location.href = 'index.html';
+        }
+    }catch(error){
+        showAlert("Credenciales invalidas", 'error');
     }
 });
 </script>

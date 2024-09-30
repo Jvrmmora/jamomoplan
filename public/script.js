@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function loadPlan() {
     const token = localStorage.getItem('token');
     try {
-        const response = await fetch('http://localhost:3000/plan', {
+        const response = await fetch(`${window.env.BACK_END_ENV}/plan`, {
             headers: {
                 'Authorization': token
             }
@@ -47,8 +47,8 @@ async function loadPlan() {
 async function loadProgress() {
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
-    try {
-        const response = await fetch(`http://localhost:3000/progress/${user.email}`, {
+    try {`${window.env.BACK_END_ENV}/login`
+        const response = await fetch(`${window.env.BACK_END_ENV}/progress/${user.email}`, {
             headers: {
                 'Authorization': token
             }
@@ -75,7 +75,7 @@ async function saveProgress() {
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
     try {
-        const response = await fetch('http://localhost:3000/progress', {
+        const response = await fetch(`${window.env.BACK_END_ENV}/progress`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -310,7 +310,7 @@ function showProfile() {
     const newPassword = prompt('Nueva contraseña:');
     const token = localStorage.getItem('token');
 
-    fetch('http://localhost:3000/profile', {
+    fetch(`${window.env.BACK_END_ENV}/profile`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, firstName: newFirstName, lastName: newLastName, password: newPassword })
