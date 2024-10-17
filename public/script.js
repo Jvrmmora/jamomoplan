@@ -24,6 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Recuperar el plan desde el servidor
 async function loadPlan() {
+    window.addEventListener('load', displayStreak);
+    window.addEventListener('load', checkStreakButton);
     const token = localStorage.getItem('token');
     try {
         const response = await fetch(`${window.env.BACK_END_ENV}/plan`, {
@@ -115,7 +117,7 @@ function updateNavigationButtons() {
     const dateCompleted = completionDates[dayIndex];
     if(dateCompleted){
         diff = currentDate !== dateCompleted.split(' ')[0];
-        console.log(diff)
+
     }
     if(!completionStatus[dayIndex] || !diff){
         nextDayButton.disabled = true;

@@ -5,7 +5,15 @@ const userSchema = new mongoose.Schema({
     firstName: String,
     lastName: String,
     email: { type: String, unique: true },
-    password: String
+    password: String,
+    streak: {
+        type: Number,
+        default: 0
+    },
+    lastActive: {
+        type: Date,
+        default: null
+    }
 });
 
 // Método para encriptar la contraseña antes de guardar

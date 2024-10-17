@@ -45,7 +45,7 @@ app.post('/login', async (req, res) => {
         if (!isMatch) return res.status(400).send('Invalid credentials');
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.TOKEN_EXP });
-        res.json({ token, user: { firstName: user.firstName, lastName: user.lastName, email: user.email } });
+        res.json({ token, user: { firstName: user.firstName, lastName: user.lastName, email: user.email, id:user._id} });
     } catch (err) {
         res.status(500).send(err);
     }
@@ -160,6 +160,47 @@ app.post('/plan',auth, async (req, res) => {
     } catch (err) {
         res.status(500).send(err);
     }
+});
+
+app.post('/update-streak', async (req, res) => {
+    const { userId } = req.body;
+    const user = await User.findById(userId);
+
+    if (!user) {
+        return res.status(404).send('User not found');
+    }
+
+    const today = new Date();
+    const lastActive = user.lastActive ? new Date(user.lastActive) : null;
+
+    if (lastActive) {
+        const diffTime = Math.abs(today - lastActive);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 1) {
+            user.streak += 1;
+        } else if (diffDays > 1) {
+            user.streak = 1;
+        }
+    } else {
+        user.streak = 1;
+    }
+
+    user.lastActive = today;
+    await user.save();
+
+    res.send({ streak: user.streak });
+});
+
+app.get('/get-streak', async (req, res) => {
+    const { userId } = req.query;
+    const user = await User.findById(userId);
+
+    if (!user) {
+        return res.status(404).send('User not found');
+    }
+
+    res.send({ streak: user.streak });
 });
 
 app.listen(port, () => {

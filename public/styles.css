@@ -435,3 +435,106 @@ button:disabled {
 .current-date{
     padding: 10px;
 }
+.streak-container {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #059263;
+}
+
+.streak-container p {
+    margin: 10px 0;
+}
+
+/* Texto llamativo fuera del botón */
+.streak-text {
+    font-size: 28px;
+    color: #2980b9;
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Wrapper para el botón y el efecto de luz */
+.streak-button-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* Botón circular con efecto de palpitación */
+.streak-button {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: #2980b9;
+    color: white;
+    border: none;
+    font-size: 48px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 1;
+    animation: pulse 2s infinite; /* Animación de palpitación */
+    transition: background-color 0.3s ease;
+}
+
+.streak-button:hover {
+    background-color: #2980b9;
+}
+
+.streak-button:disabled {
+    background-color: #2980b9;
+    cursor: not-allowed;
+}
+
+/* Animación de palpitación */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1); /* Agranda ligeramente el botón */
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Efecto de luces brillantes */
+.glow-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(255,255,255,0.2), transparent);
+    filter: blur(10px);
+    animation: glow 2s infinite alternate; /* Animación de brillo */
+    z-index: 0;
+}
+
+@keyframes glow {
+    0% {
+        /* Sombras suaves y colores azules claros */
+        box-shadow: 
+            0 0 5px rgba(0, 180, 255, 0.4),  /* Luz interior más suave */
+            0 0 10px rgba(0, 140, 255, 0.5), 
+            0 0 15px rgba(0, 120, 255, 0.4),
+            0 0 20px rgba(0, 100, 255, 0.3); /* Luz más externa tenue */
+    }
+    100% {
+        /* Incremento leve del brillo en tonos azules */
+        box-shadow: 
+            0 0 8px rgba(0, 180, 255, 0.6),
+            0 0 12px rgba(0, 140, 255, 0.6),
+            0 0 18px rgba(0, 120, 255, 0.5),
+            0 0 25px rgba(0, 100, 255, 0.4);
+    }
+}
+

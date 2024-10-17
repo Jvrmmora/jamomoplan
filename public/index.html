@@ -21,11 +21,10 @@
     </script>
 </head>
 <body>
-
 <div class="container">
     <div id="alert-container"></div>
     <header>
-            <div id="current-date" class="current-date"></div>
+        <div id="current-date" class="current-date"></div>
         <div id="user-info" class="user-info">
             <div class="user-initials" id="user-initials"></div>
             <div class="user-menu" id="user-menu">
@@ -34,6 +33,15 @@
             </div>
         </div>
     </header>
+    <div id="streak-container" class="streak-container">
+        <p class="streak-text">Días de racha</p>
+        <div class="streak-button-wrapper">
+            <button id="streak-button" class="streak-button" onclick="incrementStreak()">
+                <span id="streak-count">0</span>
+            </button>
+            <div class="glow-effect"></div>
+        </div>
+    </div>           
     <h1>Plan de Sanación</h1>
     <div id="content"></div>
     <button id="prev-day-button" onclick="prevDay()">Día Anterior</button>
@@ -50,6 +58,7 @@
 </div>
 <script src="/env.js"></script>
 <script src="script.js"></script>
+<script src="streak.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const user = JSON.parse(localStorage.getItem('user'));
