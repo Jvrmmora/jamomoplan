@@ -53,7 +53,8 @@ app.post('/login', async (req, res) => {
 app.get('/env.js', (req, res) => {
     res.setHeader('Content-Type', 'application/javascript');
     res.send(`window.env = ${JSON.stringify({
-        BACK_END_ENV: process.env.BACK_END_ENV
+        BACK_END_ENV: process.env.BACK_END_ENV,
+        EMAILJS_PUBLIC_KEY: process.env.EMAILJS_PUBLIC_KEY
     })}`);
 });
 app.put('/profile', async (req, res) => {

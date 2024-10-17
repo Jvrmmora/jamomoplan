@@ -258,7 +258,7 @@ function toggleMarkAsDoneButton() {
 function sendEmailNotification() {
     const user = JSON.parse(localStorage.getItem('user'));
     const templateParams = {
-        to_email: 'tu_correo@ejemplo.com', // Cambia esto por tu dirección de correo
+        to_email: user.email, // Cambia esto por tu dirección de correo
         day: plan[currentWeek].days[currentDay], // Envía el día completado
         subject: `🎉 Hola! ${user.firstName} Notificación de Progreso dia numero ${plan[currentWeek].days[currentDay]}` 
     };

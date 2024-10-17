@@ -11,11 +11,11 @@
     <script src="https://cdn.jsdelivr.net/npm/suneditor@latest/src/lang/en.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@2.0.2/build/global/luxon.min.js"></script>
-    <script src="config.js"></script> <!-- Cargar la configuración -->
+    <script src="/env.js"></script>
     <script type="text/javascript">
     (function(){
         emailjs.init({
-            publicKey: window.emailjsPublicKey, // Usar la clave pública desde la configuración
+            publicKey: window.env.EMAILJS_PUBLIC_KEY, 
         });
     })();
     </script>
@@ -56,7 +56,6 @@
     <button id="mark-as-done-button" onclick="markAsDone()">Marcar como completado</button>
     <div id="summary"></div>
 </div>
-<script src="/env.js"></script>
 <script src="script.js"></script>
 <script src="streak.js"></script>
 <script>
