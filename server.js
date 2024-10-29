@@ -177,12 +177,10 @@ app.post('/update-streak', async (req, res) => {
     if (lastActive) {
         const diffTime = Math.abs(today - lastActive);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        if (diffDays === 1) {
-            user.streak += 1;
-        } else if (diffDays > 3) {
+        if (diffDays > 3) {
             user.streak = 1;
         }
+        user.streak += 1;
     } else {
         user.streak = 1;
     }
