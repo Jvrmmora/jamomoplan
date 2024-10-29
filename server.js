@@ -180,7 +180,7 @@ app.post('/update-streak', async (req, res) => {
 
         if (diffDays === 1) {
             user.streak += 1;
-        } else if (diffDays > 1) {
+        } else if (diffDays > 3) {
             user.streak = 1;
         }
     } else {
